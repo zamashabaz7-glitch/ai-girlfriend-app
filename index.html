@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Companion</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1a1a1a; color: #fff; margin: 0; padding: 10px; display: flex; flex-direction: column; height: 93vh; }
+        #image-container { text-align: center; margin-bottom: 8px; position: relative; }
+        #companion-img { max-width: 100%; max-height: 200px; border-radius: 12px; box-shadow: 0px 4px 12px rgba(0,0,0,0.5); object-fit: cover; }
+        #img-status { font-size: 12px; color: #aaa; margin-top: 4px; }
+        #chat-container { flex: 1; overflow-y: auto; background: #2a2a2a; padding: 12px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0,0,0,0.5); margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .message { padding: 10px 14px; border-radius: 15px; max-width: 85%; line-height: 1.4; word-break: break-word; font-size: 15px; }
+        .user { background: #b30000; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .ai { background: #3a3a3a; color: #ddd; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .input-area { display: flex; gap: 8px; }
+        input { flex: 1; padding: 12px; background: #333; color: white; border: 1px solid #555; border-radius: 25px; outline: none; font-size: 16px; }
+        button { background: #b30000; color: white; border: none; padding: 0 20px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+    <h3 style="text-align: center; color: #ff4d4d; margin: 2px 0 6px 0;">AI Companion 🔥</h3>
+    
+    <div id="image-container">
+        <!-- Image Preview Frame -->
+        <img id="companion-img" src="https://image.pollinations.ai/prompt/A%20beautiful%20portrait,%20cinematic%20lighting?nologo=true" alt="Companion">
+        <div id="img-status">Ready</div>
+    </div>
+
+    <div id="chat-container">
+        <div class="message ai">Hey there... What's on your mind?</div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const inputField = document.getElementById("user-input");
+            const chatContainer = document.getElementById("chat-container");
+            const imgStatus = document.getElementById("img-status");
+            const userText = inputField.value.trim();
+            if (!userText) return;
+
+            // 1. Show User Message
+            chatContainer.innerHTML += `<div class="message user">${userText}</div>`;
+            inputField.value = "";
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // 2. Simulated / Dynamic Response (or connect your Hugging Face / LLM API endpoint here)
+            let aiReply = "I'm right here with you, listening to every word.";
+            
+            // 3. Show AI Message
+            chatContainer.innerHTML += `<div class="message ai">${aiReply}</div>`;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // 4. Voice Audio Output (Phone's Native Speech)
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(aiReply);
+                utterance.pitch = 1.1;
+                window.speechSynthesis.speak(utterance);
+            }
+
+            // 5. Update Dynamic Image based on chat keywords
+            imgStatus.innerText = "Generating visual...";
+            const safePrompt = encodeURIComponent(`Detailed portrait, scenic mood, ${userText}, high quality`);
+            const randomSeed = Math.floor(Math.random() * 100000);
+            
+            // Image source endpoint update
+            const imageUrl = `https://image.pollinations.ai/prompt/${safePrompt}?width=512&height=512&seed=${randomSeed}&nologo=true`;
+            
+            const companionImg = document.getElementById("companion-img");
+            companionImg.src = imageUrl;
+            
+            companionImg.onload = () => {
+                imgStatus.innerText = "Ready";
+            };
+        }
+    </script>
+</body>
+</html>
